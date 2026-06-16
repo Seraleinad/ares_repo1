@@ -7,7 +7,6 @@
 }
 
 :root {
-  /* NQa Brand Colors */
   --charcoal:   #26242A;
   --teal:       #6BC8C0;
   --warm-gray:  #A89C94;
@@ -16,12 +15,8 @@
   --light-gray: #DAD8D8;
   --white:      #FFFFFF;
   --off-white:  #F8F7F6;
-
-  /* Typography */
-  --font-sans: 'Montserrat', Arial, sans-serif;
-
-  /* Easing */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-sans:  'Montserrat', Arial, sans-serif;
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html {
@@ -30,16 +25,36 @@ html {
   text-rendering: optimizeLegibility;
 }
 
+/* Fixed background image on html — never moves as you scroll */
+html {
+  background-color: #26242A;
+  background-image: url(/law-bg.png);
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
 body {
   font-family: var(--font-sans);
-  background: var(--off-white);
+  /* 90% dark overlay so image is subtle — use a semi-transparent bg */
+  background: rgba(38, 36, 42, 0.75);
   color: var(--charcoal);
   overflow-x: hidden;
   line-height: 1.6;
+  /* Must not be opaque or image wont show */
+}
+
+/* All page sections must use rgba backgrounds, not solid #26242A */
+/* so the fixed image bleeds through at 10% */
+
+/* Offset page content below fixed navbar */
+main {
+  padding-top: 76px;
 }
 
 /* ── Scrollbar ── */
-::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--warm-gray); border-radius: 2px; }
 
@@ -49,6 +64,97 @@ body {
 /* ── Focus ── */
 :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
 
+/* ── Animations ── */
+@keyframes scrollLine {
+  0%, 100% { opacity: 0.4; transform: scaleY(1);   transform-origin: top; }
+  50%       { opacity: 1;   transform: scaleY(0.5); transform-origin: top; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── Teal glow — static, no animation ── */
+.teal-glow {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(107,200,192,0.07) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Nav desktop/mobile ── */
+@media (max-width: 768px) {
+  .nav-links-desktop { display: none !important; }
+  .hamburger         { display: flex !important; }
+}
+
+/* ── Tilt card ── */
+.tilt-card {
+  transition: transform 0.45s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.45s cubic-bezier(0.16,1,0.3,1),
+              background 0.35s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* ── Feature row hover ── */
+.feature-row {
+  transition: color 0.2s ease, padding-left 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.feature-row:hover { color: #fff !important; padding-left: 12px !important; }
+
+/* ── Initiative cards ── */
+.init-card {
+  position: relative;
+  /* Glassmorphism: semi-transparent dark + blur */
+  background: rgba(30, 28, 34, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(107, 200, 192, 0.12);
+  border-radius: 16px;
+  height: 400px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: default;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.init-card:hover {
+  background: rgba(38, 36, 42, 0.6);
+  border-color: var(--hover-accent, #6BC8C0);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(107,200,192,0.15), inset 0 1px 0 rgba(255,255,255,0.07);
+  transform: translateY(-4px);
+}
+.init-default {
+  position: absolute;
+  inset: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.init-card:hover .init-default {
+  opacity: 0;
+  transform: translateY(-15px);
+  pointer-events: none;
+}
+.init-hover {
+  position: absolute;
+  inset: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+.init-card:hover .init-hover {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -56,3 +162,44 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+/* ── CTA Button ── */
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: Montserrat, Arial, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #26242A;
+  background: #6BC8C0;
+  padding: 0.95rem 1.75rem 0.95rem 2rem;
+  border-radius: 100px;
+  position: relative;
+  transition: box-shadow 0.35s cubic-bezier(0.16,1,0.3,1),
+              transform   0.35s cubic-bezier(0.16,1,0.3,1),
+              gap         0.35s cubic-bezier(0.16,1,0.3,1);
+}
+
+.cta-btn:hover {
+  box-shadow: 0 0 16px rgba(107,200,192,0.18), 0 3px 10px rgba(0,0,0,0.15);
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+.cta-btn .cta-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(38,36,42,0.15);
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.cta-btn:hover .cta-arrow {
+  transform: translateX(2px);
+}
+
